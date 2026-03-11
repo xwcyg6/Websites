@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QQ号价值精准评估 | 数字二手市场参考 - 丢塔网</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+    <style id="main-style">
+        :root {
+            --main-bg: rgba(255,255,255,0.60);
+            --main-blur: 30px;
+            --main-card-radius: 30px;
+            --main-shadow: 0 16px 48px 0 rgba(43,96,182,0.22);
+            --button-radius: 26px;
+            --button-bg: linear-gradient(93deg, #45c5d9 0%, #4c7ff4 100%);
+            --button-bg-hover: linear-gradient(93deg, #338fab 0%, #2162cd 100%);
+            --input-bg: rgba(244,247,250,0.9);
+            --input-bg-focus: rgba(234,242,253,1);
+            --frost-panel: rgba(255,255,255,0.7);
+            --frost-panel-blur: 22px;
+            --text-main: #23272f;
+            --text-sub: #7285a3;
+            --text-highlight: #2e7aef;
+            --border-light: #e3e9f1;
+            --tag-bg: #ff8e3c;
+            --tag-cl: #fff;
+        }
+        body {
+            font-family: 'Inter', '微软雅黑', Arial, sans-serif;
+            background: radial-gradient(ellipse at center, #f8fafc 0%, #e3e9f1 100%);
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-main);
+            transition: background .3s;
+        }
+        .custom-bg {
+            position:fixed; left:0; top:0; width:100vw; height:100vh; z-index:-2; object-fit:cover; pointer-events:none; transition:opacity .5s;
+            opacity:1;
+        }
+        .main-panel {
+            max-width: 430px;
+            margin: 64px auto 0 auto;
+            background: var(--main-bg);
+            border-radius: var(--main-card-radius);
+            box-shadow: var(--main-shadow);
+            padding: 46px 36px 36px 36px;
+            position: relative;
+            /* 强化毛玻璃效果 */
+            backdrop-filter: blur(var(--main-blur)) saturate(1.9) brightness(1.16) contrast(1.06);
+            -webkit-backdrop-filter: blur(var(--main-blur)) saturate(1.9) brightness(1.16) contrast(1.06);
+            z-index:1;
+            border: 1.5px solid rgba(200,220,255,0.11);
+            /* 毛玻璃的微弱内光晕效果 */
+            box-shadow:
+                0 16px 48px 0 rgba(43,96,182,0.17),
+                0 1.5px 34px 0 rgba(255,255,255,0.16) inset,
+                0 0.5px 0.5px 0 rgba(40, 120, 255, 0.08) inset;
+        }
+        .main-panel:before {
+            content:"";
+            display:block;
+            position:absolute;left:-30px;right:-30px;top:-40px;bottom:-40px;
+            z-index:-1;
+            background: linear-gradient(120deg, #aee2ff 0%, #f4f9ff 100%);
+            border-radius: 42px;
+            opacity:.10;
+            pointer-events:none;
+        }
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-align: center;
+            margin-bottom: 18px;
+            background: linear-gradient(90deg, #15d1e0 20%, #3f69f7 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            user-select:none;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.07rem;
+            color: var(--text-sub);
+            margin-bottom: 36px;
+            user-select:none;
+        }
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 20px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 1px 8px 0 rgba(80,120,220,.14);
+            background: var(--frost-panel);
+            backdrop-filter: blur(var(--frost-panel-blur)) saturate(1.4);
+            -webkit-backdrop-filter: blur(var(--frost-panel-blur)) saturate(1.4);
+        }
+        #qq-input {
+            flex: 1;
+            padding: 15px 16px;
+            border: none;
+            font-size: 1.12rem;
+            outline: none;
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-weight: 500;
+            border-radius: 0;
+            transition: background .18s;
+        }
+        #qq-input:focus {
+            background: var(--input-bg-focus);
+        }
+        .round-btn {
+            background: var(--button-bg);
+            color: #fff;
+            border: none;
+            border-radius: var(--button-radius);
+            font-weight: bold;
+            font-size: 1.08rem;
+            padding: 0 28px;
+            height: 48px;
+            cursor: pointer;
+            transition: background .18s, box-shadow .22s, transform .14s;
+            box-shadow: 0 2px 10px 0 rgba(80,120,220,.11);
+            outline: none;
+            margin:0 0 0 6px;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .round-btn:active {
+            transform: scale(0.97);
+        }
+        .round-btn:hover, .round-btn:focus-visible {
+            background: var(--button-bg-hover);
+            box-shadow: 0 3px 18px 0 rgba(80,120,220,.16);
+        }
+        .custom-bg-bar {
+            display:flex;justify-content:space-between;align-items:center;
+            margin:12px 0 22px 0;
+            gap:10px;
+        }
+        .custom-bg-bar input[type="file"] {
+            display:none;
+        }
+        .custom-bg-bar label, .custom-bg-bar input[type="text"], .custom-bg-bar .round-btn {
+            font-size:.96rem;
+            margin-right:0;
+        }
+        .custom-bg-bar .upload-label {
+            background:var(--button-bg);
+            color:#fff; border-radius:var(--button-radius); padding: 9px 20px;
+            cursor:pointer; margin-right:4px; transition:background .18s;
+            display:inline-block;
+        }
+        .custom-bg-bar .upload-label:hover { background:var(--button-bg-hover);}
+        .custom-bg-bar input[type="text"] {
+            border-radius:16px; border:1px solid var(--border-light);
+            background: var(--input-bg); padding:7px 12px; width: 120px;
+            margin-right:4px;
+        }
+        .custom-bg-bar .round-btn {
+            padding:0 18px; height:36px; font-size:.96rem;
+        }
+        .custom-bg-bar .toggle-mode-btn {
+            width:40px; height:36px; display:flex;align-items:center;justify-content:center;
+            padding:0; font-size:1.3rem; background:var(--input-bg); color:#4c7ff4;
+            border-radius: 20px;
+        }
+        .msg-tip, .error-msg {
+            text-align: center;
+            margin: 0 0 16px 0;
+            font-size: .96rem;
+            min-height: 24px;
+        }
+        .error-msg {
+            color: #e54848;
+            background: #fff1f1;
+            padding: 7px 0;
+            border-radius: 10px;
+        }
+        .loading-row {
+            text-align: center;
+            margin: 32px 0 0 0;
+        }
+        .loader {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            border: 5px solid rgba(69,197,217,0.10);
+            border-radius: 50%;
+            border-top-color: #45c5d9;
+            border-left-color: #4c7ff4;
+            border-right-color:#d3eaff;
+            animation: loader-spin 1.1s cubic-bezier(.75,0,.3,1) infinite;
+            margin-bottom: 8px;
+            background:rgba(255,255,255,0.18);
+        }
+        @keyframes loader-spin {
+            0% { transform: rotate(0);}
+            100% { transform: rotate(360deg);}
+        }
+        .result-block {
+            display: none;
+            animation: fadeIn .7s cubic-bezier(.6,.2,.4,1.1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(32px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 14px;
+            gap: 16px;
+            animation: popIn .9s cubic-bezier(.5,1.5,.6,1) 1;
+        }
+        @keyframes popIn {
+            0% {transform:scale(0.7); opacity:0;}
+            80% {transform:scale(1.08);}
+            100% {transform:scale(1); opacity:1;}
+        }
+        .qq-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            box-shadow: 0 2px 16px 0 rgba(80,120,220,.13);
+            border: 3px solid #c3e7f6;
+            background: #f7faff;
+        }
+        .userinfo-meta {
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .qq-id {
+            font-weight: 600; font-size: 1.15rem; color: #2568b7;
+        }
+        .qq-mail {
+            font-size: .99rem; color: #7f90a2; margin-bottom: 2px;
+        }
+        .market-ref {
+            font-size: .92rem; color: #8c97ac; margin-top: 2px;
+        }
+        .estimate-section {
+            margin: 30px 0 0 0;
+        }
+        .estimate-label {
+            color: #6bc1cf;
+            font-weight: 600;
+            font-size: .98rem;
+            margin-bottom: 8px;
+        }
+        .estimate-value {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #ff6243;
+            text-shadow: 0 3px 10px #ffe9e5, 0 7px 16px #e9f1ff;
+            letter-spacing: 1px;
+            animation: valuePop .9s cubic-bezier(.5,1.5,.6,1);
+            display:inline-block;
+            background: none !important;
+            border-radius: 0;
+            padding: 0;
+        }
+        @keyframes valuePop {
+            0% {transform:scale(.7); opacity:.2;}
+            75% {transform:scale(1.14);}
+            100% {transform:scale(1); opacity:1;}
+        }
+        .market-trend {
+            margin-top: 6px;
+            color: #6685a5;
+            font-size: .98rem;
+        }
+        .score-list {
+            margin: 26px 0 0 0; padding: 0;
+            list-style: none;
+        }
+        .score-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 1.01rem;
+            animation: fadeIn .7s cubic-bezier(.6,.2,.4,1.1);
+        }
+        .score-label {
+            color: #6f7e91;
+        }
+        .score-val {
+            font-weight: 600;
+            color: var(--text-highlight);
+        }
+        .tag {
+            background:var(--tag-bg); color:var(--tag-cl); border-radius: 10px; padding:3px 12px;font-size:.92rem;margin-left:8px;box-shadow:0 1px 4px #fff6e3;
+        }
+        /* 夜间模式 */
+        body.night-mode {
+            --main-bg: rgba(31,36,54,0.80);
+            --main-blur: 38px;
+            --main-card-radius: 30px;
+            --main-shadow: 0 14px 46px 0 rgba(19,25,60,.33);
+            --button-bg: linear-gradient(93deg, #156b7e 0%, #2e3f69 100%);
+            --button-bg-hover: linear-gradient(93deg, #1e8aaf 0%, #3a4f8c 100%);
+            --input-bg: rgba(29,36,50,0.88);
+            --input-bg-focus: rgba(29,41,62,1);
+            --frost-panel: rgba(60,70,110,0.29);
+            --frost-panel-blur: 26px;
+            --text-main: #f7f9fc;
+            --text-sub: #9eaacb;
+            --text-highlight: #51b7ff;
+            --border-light: #32406b;
+            --tag-bg: #ff9b3c;
+            --tag-cl: #fff;
+            background: radial-gradient(ellipse at center, #23243b 0%, #191a28 100%);
+        }
+        body.night-mode .main-panel:before {
+            background: linear-gradient(120deg, #0b2c45 0%, #202340 100%);
+            opacity:.13;
+        }
+        body.night-mode .error-msg {
+            background: #2e1d1d; color:#ff9494;
+        }
+        body.night-mode .loader {
+            background:rgba(32,42,66,0.15);
+            border-top-color:#51b7ff; border-left-color:#2e3f69; border-right-color:#0b2c45;
+        }
+        body.night-mode .estimate-value {
+            background: none !important;
+            box-shadow: none !important;
+            text-shadow: 0 3px 10px #212b35, 0 7px 16px #191a28;
+        }
+        .main-panel,
+        .input-row {
+            /* 让毛玻璃更强烈 */
+            border: 1.5px solid rgba(255,255,255,0.22);
+        }
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .main-panel {max-width:97vw;padding: 18px 2vw;}
+            .title {font-size:1.18rem;}
+        }
+    </style>
+</head>
+<body>
+    <img id="bg-img" class="custom-bg" style="display:none;" alt="自定义背景">
+    <div class="main-panel">
+        <div class="title">QQ号价值精准估价</div>
+        <div class="subtitle">结合二手市场大数据+数字藏品市场趋势，科学评估您的QQ号实际价值</div>
+        <div class="custom-bg-bar">
+            <label class="upload-label" for="bg-upload">上传背景</label>
+            <input type="file" id="bg-upload" accept="image/*">
+            <input type="text" id="bg-url" placeholder="粘贴图片链接" style="width:120px;" value="https://bing.img.run/uhd.php">
+            <button class="round-btn" id="set-bg-btn">应用</button>
+            <button class="round-btn toggle-mode-btn" id="toggle-mode" title="切换夜间模式" aria-label="夜间模式/日间模式"><span id="moon-sun-icon">🌙</span></button>
+        </div>
+        <div class="input-row">
+            <input type="text" id="qq-input" placeholder="输入5-11位QQ号" maxlength="11" autocomplete="off">
+            <button class="round-btn" id="evaluate-btn">估价</button>
+        </div>
+        <div class="msg-tip" id="msg-tip"></div>
+        <div class="error-msg" id="error-msg" style="display:none;"></div>
+        <div class="loading-row" id="loading-row" style="display:none;">
+            <span class="loader"></span>
+            <div style="margin-top:8px;color:#6396c4;font-size:.96rem;">价格查询中…</div>
+        </div>
+        <div class="result-block" id="result-block">
+            <div class="user-info">
+                <img id="qq-avatar" class="qq-avatar" src="" alt="QQ头像">
+                <div class="userinfo-meta">
+                    <span id="qq-id" class="qq-id"></span>
+                    <span id="qq-mail" class="qq-mail"></span>
+                    <span id="market-ref" class="market-ref"></span>
+                </div>
+            </div>
+            <div class="estimate-section">
+                <div class="estimate-label">综合市场估值</div>
+                <span class="estimate-value" id="qq-value"></span>
+                <span class="tag" id="tag-recommend" style="display:none;"></span>
+                <div class="market-trend" id="market-trend"></div>
+            </div>
+            <ul class="score-list" id="score-list"></ul>
+        </div>
+    </div>
+    <script>
+        // 夜间模式切换
+        const modeBtn = document.getElementById('toggle-mode');
+        const icon = document.getElementById('moon-sun-icon');
+        let night = localStorage.getItem('nightMode') === '1';
+        function setNightMode(on) {
+            if(on) {
+                document.body.classList.add('night-mode');
+                icon.textContent = '☀️';
+                localStorage.setItem('nightMode','1');
+            } else {
+                document.body.classList.remove('night-mode');
+                icon.textContent = '🌙';
+                localStorage.setItem('nightMode','0');
+            }
+        }
+        setNightMode(night);
+        modeBtn.onclick = function(){
+            night = !night;
+            setNightMode(night);
+        };
+
+        // 自定义背景支持
+        const bgImg = document.getElementById('bg-img');
+        function setCustomBg(src) {
+            bgImg.src = src;
+            bgImg.style.display = 'block';
+            bgImg.style.opacity = '0.93';
+            localStorage.setItem('customBg', src);
+        }
+        function clearBg() {
+            bgImg.src = '';
+            bgImg.style.display = 'none';
+            localStorage.removeItem('customBg');
+        }
+        // 本地上传
+        document.getElementById('bg-upload').addEventListener('change', function(e){
+            const file = e.target.files[0];
+            if(file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(ev){
+                    setCustomBg(ev.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        // 在线链接应用（无任何限制，只要有输入就用，支持回车确认）
+        const bgUrlInput = document.getElementById('bg-url');
+        function applyBgLink() {
+            const link = bgUrlInput.value.trim();
+            if(link.length > 0) {
+                setCustomBg(link);
+            } else {
+                clearBg();
+            }
+            // 如果失败（图片加载不了），自动隐藏背景
+            bgImg.onerror = function() {
+                clearBg();
+            };
+        }
+        document.getElementById('set-bg-btn').onclick = applyBgLink;
+        bgUrlInput.addEventListener('keydown', function(e){
+            if(e.key === 'Enter') applyBgLink();
+        });
+        // 默认预设bing图片为背景
+        window.addEventListener('DOMContentLoaded', function(){
+            if (!localStorage.getItem('customBg')) {
+                setCustomBg(bgUrlInput.value.trim());
+            }
+        });
+
+        // 背景持久化
+        const bgSave = localStorage.getItem('customBg');
+        if(bgSave) setCustomBg(bgSave);
+
+        // 如果没有背景，移除背景img节点，避免残留
+        function checkBgDisplay() {
+            if (!bgImg.src || bgImg.src === window.location.href || bgImg.style.display === "none") {
+                bgImg.style.display = "none";
+            }
+        }
+        bgImg.addEventListener('error', checkBgDisplay);
+
+        // 估价逻辑
+        const marketExamples = [
+            {min: 50000, ref: "靓号(5位): 5-7万", trend: "稀有短位段位，近半年略升"},
+            {min: 20000, ref: "顺子/豹子(6位): 2-4万", trend: "精品顺子/豹子需求旺"},
+            {min: 6000,  ref: "6位普靓号: 0.6-1.2万", trend: "稳定，闲鱼交易活跃"},
+            {min: 2000,  ref: "7位稀有: 2000-4000", trend: "价格趋于平稳"},
+            {min: 500,   ref: "7-8位普号: 500-2000", trend: "低位略有下滑"},
+            {min: 200,   ref: "9-10位普通号: 200-800", trend: "走量为主"},
+            {min: 0,     ref: "11位: 一般无溢价", trend: "仅号码本身价值"}
+        ];
+        function getMarketRef(price) {
+            for(let i=0;i<marketExamples.length;i++) {
+                if(price>=marketExamples[i].min) return marketExamples[i];
+            }
+            return marketExamples[marketExamples.length-1];
+        }
+        function isSequence(num) {
+            for(let i=0;i<num.length-2;i++) {
+                let asc = true, desc = true;
+                for(let j=1;j<3;j++) {
+                    if(+num[i+j]!==+num[i]+j) asc=false;
+                    if(+num[i+j]!==+num[i]-j) desc=false;
+                }
+                if(asc||desc) return true;
+            }
+            return false;
+        }
+        function isLeopard(num) {
+            return /(\d)\1{2,}/.test(num);
+        }
+        function isSpecial(num) {
+            if(/^[1-9]0{4,}$/.test(num)) return true;
+            if(num.includes('520')||num.includes('1314')||num.includes('888')||num.includes('666')||num.includes('233')||num.includes('168')) return true;
+            return false;
+        }
+        function getTag(price, nlen) {
+            if(nlen<=6 && price>10000) return "收藏级";
+            if(price>5000) return "推荐";
+            if(price<1000 && nlen>8) return "普通";
+            return "";
+        }
+        function preciseEstimate(qq) {
+            const len = qq.length;
+            let price = 0, explain = [];
+            if(len<=5) {price+=30000;explain.push('5位极稀有');}
+            else if(len===6) {price+=9000;explain.push('6位稀有');}
+            else if(len===7) {price+=2000;}
+            else if(len===8) {price+=500;}
+            else if(len===9) {price+=200;}
+            else if(len===10) {price+=100;}
+            let repeatScore=0, leopardScore=0, seqScore=0, specialScore=0;
+            let repeat = 0; let count = {};
+            for(let d of qq) count[d]=1+(count[d]||0);
+            for(let k in count) if(count[k]>1) repeat+=count[k];
+            repeatScore = repeat*25;
+            price += repeatScore;
+            if(isLeopard(qq)) {leopardScore = 1200; price+=leopardScore;}
+            if(isSequence(qq)) {seqScore = 1500; price+=seqScore;}
+            if(isSpecial(qq)) {specialScore = 800; price+=specialScore;}
+            if(/^([7-9]|0)/.test(qq[0])) {price=Math.max(price*0.75,80);}
+            if(price>80000) price=80000;
+            if(len>=8 && price>4000) price=4000+Math.floor((price-4000)*0.4);
+            price = Math.round(price/10)*10;
+            return {
+                price,
+                lengthScore:len<=5?10:(len===6?9:(len===7?7:(len===8?5:(len===9?3:1)))),
+                repeatScore, leopardScore, seqScore, specialScore,
+                explain
+            };
+        }
+        function renderResult(qq, est) {
+            document.getElementById("qq-avatar").src = `https://q2.qlogo.cn/headimg_dl?dst_uin=${qq}&spec=100`;
+            document.getElementById("qq-id").textContent = `QQ号：${qq}`;
+            document.getElementById("qq-mail").textContent = `${qq}@qq.com`;
+            document.getElementById("qq-value").textContent = est.price + " 元";
+            const tag = getTag(est.price, qq.length);
+            if(tag) {
+                document.getElementById("tag-recommend").textContent = tag;
+                document.getElementById("tag-recommend").style.display="inline-block";
+            } else {
+                document.getElementById("tag-recommend").style.display="none";
+            }
+            const ref = getMarketRef(est.price);
+            document.getElementById("market-ref").textContent = "市场参考: "+ref.ref;
+            document.getElementById("market-trend").textContent = ref.trend;
+            let detail = [
+                {label:"号码长度",val: est.lengthScore+"分"},
+                {label:"重复数字加成",val: (est.repeatScore||0)+"分"},
+                {label:"豹子号加成",val:(est.leopardScore||0)+"分"},
+                {label:"顺子号加成",val:(est.seqScore||0)+"分"},
+                {label:"特殊组合加成",val:(est.specialScore||0)+"分"}
+            ];
+            let ul = document.getElementById("score-list");
+            ul.innerHTML = "";
+            for(const item of detail) {
+                let li = document.createElement("li");
+                let lab = document.createElement("span");
+                lab.className="score-label";
+                lab.textContent = item.label;
+                let val = document.createElement("span");
+                val.className="score-val";
+                val.textContent = item.val;
+                li.appendChild(lab);li.appendChild(val);
+                ul.appendChild(li);
+            }
+            document.getElementById("result-block").style.display = "block";
+        }
+        function showErr(msg) {
+            document.getElementById("error-msg").textContent = msg;
+            document.getElementById("error-msg").style.display="block";
+        }
+        function clearMsg() {
+            document.getElementById("error-msg").style.display="none";
+            document.getElementById("msg-tip").textContent="";
+        }
+        document.getElementById('evaluate-btn').addEventListener('click', function() {
+            clearMsg();
+            let qq = document.getElementById("qq-input").value.trim();
+            if(!/^[1-9]\d{4,10}$/.test(qq)) {
+                showErr("请输入5-11位有效QQ号");
+                return;
+            }
+            document.getElementById("result-block").style.display="none";
+            document.getElementById("loading-row").style.display="block";
+            setTimeout(()=>{
+                try {
+                    let est = preciseEstimate(qq);
+                    renderResult(qq, est);
+                } catch(e) {
+                    showErr("评估失败，请稍后重试");
+                } finally {
+                    document.getElementById("loading-row").style.display="none";
+                }
+            }, 1000+Math.random()*700);
+        });
+        document.getElementById("qq-input").addEventListener("keydown", function(e){
+            if(e.key==="Enter") document.getElementById('evaluate-btn').click();
+        });
+    </script>
+</body>
+</html>
